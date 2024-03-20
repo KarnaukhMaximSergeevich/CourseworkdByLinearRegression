@@ -64,4 +64,5 @@ class PredictBitcoinCourse:
         self.show_result()
 
 
-class_model = PredictBitcoinCourse()
+if __name__ == "__main__":
+    class_model = PredictBitcoinCourse()
