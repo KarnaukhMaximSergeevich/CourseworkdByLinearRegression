@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_percentage_error
 
 
 class PredictBitcoinCourse:
@@ -16,7 +16,6 @@ class PredictBitcoinCourse:
         self.Y_train = None
         self.Y_test = None
         self.pred_y = None
-        self.random_forest_Y_pred = None
         self.execute_function()
 
     def get_datasets(self):
@@ -34,7 +33,18 @@ class PredictBitcoinCourse:
         reg_model = LinearRegression()
         reg_model.fit(self.X_train, self.Y_train)
         self.pred_y = reg_model.predict(self.X_test)
-        print(f"Regression model score:\n{reg_model.score(self.X_test, self.Y_test)}")
+
+        reg_score = reg_model.score(self.X_test, self.Y_test)
+        W_0 = reg_model.intercept_
+        W_1 = reg_model.coef_
+
+        print(f"Regression model score:\n{np.round(reg_score, 2)}"
+              f"\nIntercept(W0):\n{np.round(W_0, 2)}"
+              f"\nCoef(W1):\n{np.round(W_1, 2)}")
+
+        mape = mean_absolute_percentage_error(self.Y_test, self.pred_y)
+
+        print(f"MAPE:\n{np.round(mape, 2)}%")
 
     def show_result(self):
         """This function show visual result by matplotlib"""
