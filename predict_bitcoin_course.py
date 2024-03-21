@@ -21,7 +21,8 @@ class PredictBitcoinCourse:
     def get_datasets(self):
         """In this function we get a features(x) and target(y) - for training and test"""
 
-        X_value = self.data_set.iloc[:, [1]]
+        X_value = self.data_set.drop(["price", "furnishingstatus"], axis=1)
+        X_value = X_value.replace({"yes": 1, "no": 0})
         Y_value = self.data_set.iloc[:, [0]]
 
         self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X_value, Y_value,
@@ -34,13 +35,13 @@ class PredictBitcoinCourse:
         reg_model.fit(self.X_train, self.Y_train)
         self.pred_y = reg_model.predict(self.X_test)
 
-        reg_score = reg_model.score(self.X_test, self.Y_test)
+        reg_score = reg_model.score(self.X_train, self.Y_train)
         W_0 = reg_model.intercept_
         W_1 = reg_model.coef_
 
         print(f"Regression model score:\n{np.round(reg_score, 2)}"
               f"\nIntercept(W0):\n{np.round(W_0, 2)}"
-              f"\nCoef(W1):\n{np.round(W_1, 2)}")
+              f"\nCoef(W1):\n{[np.round(int, 2) for int in W_1[0]]}")
 
         mape = mean_absolute_percentage_error(self.Y_test, self.pred_y)
 
@@ -49,12 +50,12 @@ class PredictBitcoinCourse:
     def show_result(self):
         """This function show visual result by matplotlib"""
 
-        plt.scatter(self.X_test, self.Y_test, alpha=0.6)
-        plt.plot(self.X_test, self.pred_y, color="red")
-        plt.xlabel("The total area of the house in square feet")
-        plt.ylabel("Price of house")
-        plt.title("House price dataframe")
-        plt.show()
+        for i in range(11):
+            plt.scatter(self.X_test.iloc[:, [i]], self.Y_test, alpha=0.5)
+            plt.show()
+
+        print(f"First 10 value of price (Factual data):\n{self.Y_test.head(11)}")
+        print(f"First 10 value of price (Predict data):\n{self.pred_y[range(11)]}")
 
     def execute_function(self):
         """It's function execute other function in this class"""
